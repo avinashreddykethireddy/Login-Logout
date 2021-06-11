@@ -18,6 +18,10 @@ app.get("/signup",function(req,res){
     res.render("signup");
 })
 
+app.get("/home",function(req,res){
+    res.render("home");
+})
+
 app.listen(port,() => {
     console.log(`Project listening at http://localhost:${port}`);
 });
