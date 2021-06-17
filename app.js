@@ -29,16 +29,17 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.get("/",function(req,res){
-    res.redirect("/login");
+    res.redirect("/home");
 });
 
 app.get("/login",function(req,res){
     res.render("login");
 })
 
-app.post("/login",function(req,res){
-    res.send("kk");
-})
+app.post("/login",passport.authenticate("local",{
+    successRedirect: "/home",
+    failureRedirect: "/login"
+}), (req,res)=>{});
 
 app.get("/signup",function(req,res){
     res.render("signup");
@@ -47,16 +48,28 @@ app.get("/signup",function(req,res){
 app.post("/signup", (req,res) => {
     const password = req.body.password;
     const re_password = req.body.retype_password;
-    const username = req.body.username;
     if(password !== re_password){
         res.redirect("/signup");
     }
     else{
-        res.send("ok");
+        var newUser = new User({username: req.body.username});
+        User.register(newUser,password,(err,user) => {
+            if(err){
+                return res.render("signup");
+            }
+            
+            passport.authenticate("local")(req,res,() => {
+                res.redirect("/home");
+            });
+        })
     }
 })
+app.get("/logout",(req,res) => {
+    req.logout();
+    res.redirect("/");
+});
 
-app.get("/home",function(req,res){
+app.get("/home",isLoggedIn,function(req,res){
     res.render("home");
 })
 
