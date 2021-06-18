@@ -13,6 +13,7 @@ var User = require('./models/user');
 const app = express();
 const port = 3000;
 
+
 app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,'public')));
 app.use(session({
@@ -28,6 +29,9 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//================
+//    ROUTES
+//================
 app.get("/",function(req,res){
     res.redirect("/home");
 });
@@ -72,6 +76,22 @@ app.get("/logout",(req,res) => {
 app.get("/home",isLoggedIn,function(req,res){
     res.render("home");
 })
+// =============
+// Google ROUTES
+// =============
+
+require('./google_auth');
+
+app.get('/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
+
+app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.send("okkkkk avinash");
+  });
+
+
+
 
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){
