@@ -1,3 +1,7 @@
+const express = require('express');
+const session = require('express-session');
+var router = express.Router();
+
 const passport = require('passport');
 const OAuth2Data = require('./credentials.json'); //import credentials file
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -10,9 +14,23 @@ var UserGoogleSchema = new Schema({ googleId: Number});
 UserGoogleSchema.plugin(findOrCreate);
 var UserGoogle = mongoose.model('UserGoogle', UserGoogleSchema);
 
-
 const GOOGLE_CLIENT_ID = OAuth2Data.installed.client_id; //read client_id from credentials.json 
 const GOOGLE_CLIENT_SECRET = OAuth2Data.installed.client_secret; //read client_secret from credentials.json
+
+router.use(session({
+    // secret: 'UnsolvedTomorrow',
+    // resave: false,
+    // saveUninitialized: false
+    secret: 'secrettexthere',
+    saveUninitialized: true,
+    resave: true,
+  // using store session on MongoDB using express-session + connect
+    
+}));
+
+router.use(passport.initialize());
+router.use(passport.session());
+
 
 passport.serializeUser((user,done) => {
     done(null,user.id);
@@ -35,3 +53,24 @@ passport.use(new GoogleStrategy({
     });
   }
 ));
+
+
+// =============
+// Google ROUTES
+// =============
+
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login'}),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    //console.log("ok now see");
+    //console.log(req.isAuthenticated());
+    res.redirect("/home");
+  });
+
+
+  
+
+module.exports = router;

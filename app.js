@@ -13,13 +13,15 @@ var User = require('./models/user');
 const app = express();
 const port = 3000;
 
+var googleRoutes = require("./google_auth");
+app.use("/",googleRoutes);
 
 app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,'public')));
 app.use(session({
     secret: 'UnsolvedTomorrow',
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -76,24 +78,26 @@ app.get("/logout",(req,res) => {
 app.get("/home",isLoggedIn,function(req,res){
     res.render("home");
 })
+
+
 // =============
 // Google ROUTES
 // =============
 
-require('./google_auth');
 
-app.get('/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
+// app.get('/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
 
-app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.send("okkkkk avinash");
-  });
+// app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/home' }),
+//   function(req, res) {
+//     // Successful authentication, redirect home.
+//     res.redirect("/home");
+//   });
 
 
 
 
 function isLoggedIn(req,res,next){
+    console.log(req.isAuthenticated());
     if(req.isAuthenticated()){
         return next();
     }
