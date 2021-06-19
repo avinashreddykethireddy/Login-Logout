@@ -16,6 +16,10 @@ const port = 3000;
 var googleRoutes = require("./google_auth");
 app.use("/",googleRoutes);
 
+var facebookRoutes = require("./facebook_auth");
+app.use("/",facebookRoutes);
+
+
 var localRoutes = require("./local_auth");
 app.use("/",localRoutes);
 
