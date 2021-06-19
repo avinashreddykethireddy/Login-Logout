@@ -23,18 +23,6 @@ app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,'public')));
 
 
-// app.use(session({
-//     secret: 'UnsolvedTomorrow',
-//     resave: true,
-//     saveUninitialized: true
-// }));
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use(bodyParser.urlencoded({extended: true}));
-
-// passport.use(new LocalStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
 
 //================
 //    ROUTES
@@ -43,39 +31,6 @@ app.use(express.static(path.join(__dirname,'public')));
 app.get("/",function(req,res){
     res.redirect("/home");
 });
-
-// app.get("/login",function(req,res){
-//     res.render("login");
-// })
-
-// app.post("/login",passport.authenticate("local",{
-//     successRedirect: "/home",
-//     failureRedirect: "/login"
-// }), (req,res)=>{});
-
-// app.get("/signup",function(req,res){
-//     res.render("signup");
-// })
-
-// app.post("/signup", (req,res) => {
-//     const password = req.body.password;
-//     const re_password = req.body.retype_password;
-//     if(password !== re_password){
-//         res.redirect("/signup");
-//     }
-//     else{
-//         var newUser = new User({username: req.body.username});
-//         User.register(newUser,password,(err,user) => {
-//             if(err){
-//                 return res.render("signup");
-//             }
-            
-//             passport.authenticate("local")(req,res,() => {
-//                 res.redirect("/home");
-//             });
-//         })
-//     }
-// })
 app.get("/logout",(req,res) => {
     req.logout();
     res.redirect("/");
@@ -85,22 +40,6 @@ app.get("/home",isLoggedIn,function(req,res){
     console.log(req.body.username);
     res.render("home");
 })
-
-
-// =============
-// Google ROUTES
-// =============
-
-
-// app.get('/google', passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
-
-// app.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login', successRedirect: '/home' }),
-//   function(req, res) {
-//     // Successful authentication, redirect home.
-//     res.redirect("/home");
-//   });
-
-
 
 
 function isLoggedIn(req,res,next){
